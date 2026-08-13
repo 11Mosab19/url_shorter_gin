@@ -24,7 +24,7 @@ CREATE TABLE urls (
     status status DEFAULT 'active',
     hashed_password TEXT,   
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    total_clicks INT CHECK(total_clicks >= 0 ),
+    total_clicks INT DEFAULT 0 NOT NULL CHECK(total_clicks >= 0 ),
     user_id INT REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE analytics (
     url_id INT REFERENCES urls(id) ON DELETE CASCADE,
     clicked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     device_type TEXT NOT NULL,
-    country TEXT NOT NULL,
+    country TEXT NOT NULL
 );
 
 

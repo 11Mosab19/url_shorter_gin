@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 	"url_shorter_gin/apperrors"
 	db "url_shorter_gin/database"
 	"url_shorter_gin/models"
@@ -60,7 +61,7 @@ func (UrR *UrlRepository) GetUrlByShortCode(ctx context.Context, code string) (m
 
 func (UrR *UrlRepository) GetUserUrl(ctx context.Context, UserId int) ([]models.Url, error) {
 	var urls []models.Url
-	GetURlsQuery := `SELECT original_url,short_code,id,created_at,expires_at,status,hashed_password,updated_at,total_clicks,user_id FROM urls WHERE user_id = $1;`
+	GetURlsQuery := `SELECT original_url,short_code,id,created_at,expires_at,status,hashed_password,updated_at,total_clicks,user_id FROM urls WHERE user_id = $1 AND status != 'deleted';`
 	rows, err := UrR.DB.DB.QueryContext(ctx, GetURlsQuery, UserId)
 	if err != nil {
 		return []models.Url{}, err
@@ -80,13 +81,15 @@ func (UrR *UrlRepository) GetUserUrl(ctx context.Context, UserId int) ([]models.
 	return urls, nil
 }
 
-func (UrR *UrlRepository) DeleteUrlById(ctx context.Context, id int) error {
-	DeleteQuery := `UPDATE urls SET status = 'deleted' WHERE id =$1;`
-	result, err := UrR.DB.DB.ExecContext(ctx, DeleteQuery, id)
+func (UrR *UrlRepository) DeleteUrlById(ctx context.Context, id int, UserId int) error {
+	DeleteQuery := `UPDATE urls SET status = 'deleted' WHERE id =$1 AND user_id=$2;`
+	result, err := UrR.DB.DB.ExecContext(ctx, DeleteQuery, id, UserId)
 	if err != nil {
 		return err
 	}
-	if x, err1 := result.RowsAffected(); x == 0 && err1 == nil {
+	if x, err1 := result.RowsAffected(); err1 != nil {
+		return err1
+	} else if x == 0 {
 		return apperrors.ErrUrlNotFound
 	}
 	return nil
@@ -103,4 +106,47 @@ func (UrR *UrlRepository) GetByOriginalURLAndUser(ctx context.Context, UserId in
 		return result
 	}
 	return apperrors.ErrAlreadyExistUrl
+}
+
+func (UrR *UrlRepository) UpdateUrlStatus(ctx context.Context, status string, id int, UserId int) (models.Url, error) {
+	var url models.Url
+	UpdateQuery := `UPDATE urls SET status = $1 WHERE id=$2 AND user_id = $3 RETURNING original_url,short_code,created_at,expires_at,hashed_password,total_clicks,user_id;`
+	err := UrR.DB.DB.QueryRowContext(ctx, UpdateQuery, status, id, UserId).Scan(&url.OriginalUrl, &url.ShortCode, &url.CreatedAt, &url.ExpiresAt, &url.HashedPassword, &url.TotalClicks, &url.UserID)
+	if err == sql.ErrNoRows {
+		return models.Url{}, apperrors.ErrUrlNotFound
+	} else if err != nil {
+		return models.Url{}, err
+	}
+	url.Status = status
+	url.Id = id
+	return url, nil
+}
+
+func (UrR *UrlRepository) UpdateUrlHashedPassword(ctx context.Context, id int, NewHashedPassword string, UserId int) (models.Url, error) {
+	var url models.Url
+	UpdateQuery := `UPDATE urls SET  hashed_password= $1 WHERE id=$2 AND user_id = $3 RETURNING original_url,short_code,created_at,expires_at,status,total_clicks,user_id;`
+	err := UrR.DB.DB.QueryRowContext(ctx, UpdateQuery, NewHashedPassword, id, UserId).Scan(&url.OriginalUrl, &url.ShortCode, &url.CreatedAt, &url.ExpiresAt, &url.Status, &url.TotalClicks, &url.UserID)
+	if err == sql.ErrNoRows {
+		return models.Url{}, apperrors.ErrUrlNotFound
+	}
+	if err != nil {
+		return models.Url{}, err
+	}
+	url.HashedPassword = NewHashedPassword
+	url.Id = id
+	return url, nil
+}
+
+func (UrR *UrlRepository) UpdateUrlExpireDate(ctx context.Context, id int, UserId int, NewDate *time.Time) (models.Url, error) {
+	var url models.Url
+	UpdateQuery := `UPDATE urls SET expires_at = $1 WHERE id=$2 AND user_id = $3 RETURNING original_url,short_code,created_at,status,hashed_password,total_clicks,user_id;`
+	err := UrR.DB.DB.QueryRowContext(ctx, UpdateQuery, NewDate, id, UserId).Scan(&url.OriginalUrl, &url.ShortCode, &url.CreatedAt, &url.Status, &url.HashedPassword, &url.TotalClicks, &url.UserID)
+	if err == sql.ErrNoRows {
+		return models.Url{}, apperrors.ErrUrlNotFound
+	} else if err != nil {
+		return models.Url{}, err
+	}
+	url.ExpiresAt = NewDate
+	url.Id = id
+	return url, nil
 }

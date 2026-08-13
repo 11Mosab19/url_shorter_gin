@@ -47,7 +47,15 @@ type ResponseUrl struct {
 }
 
 type UpdateURLRequest struct {
-	Password   string `json:"password"`
-	Expiration string `json:"expiration"`
-	Status     string `json:"status"`
+	NewPassword string `json:"new_password"`
+	OldPassword string `json:"old_password"`
+	Expiration  string `json:"expiration"`
+	Status      string `json:"status"`
+}
+
+type UpdateUserRequest struct {
+	NewPassword string `json:"new_password"`
+	OldPassword string `json:"old_password"`
+	FullName    string `json:"full_name"`
+	Email       string `json:"email" binding:"email"`
 }
