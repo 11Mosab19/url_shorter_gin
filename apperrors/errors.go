@@ -11,4 +11,6 @@ var (
 	ErrNoUrlWithId       = errors.New("no url with this id ")
 	ErrWrongUrlPassword  = errors.New("wrong url password")
 	ErrWrongUserPassword = errors.New("wrong user password")
+	HashingErr           = errors.New("error while hashing")
+	ErrGenerateShortCode = errors.New("couldn't generate shortcode")
 )

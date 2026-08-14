@@ -35,6 +35,7 @@ type CreateURLRequest struct {
 	OriginalUrl string     `json:"original_url" binding:"required,url"`
 	ShortCode   string     `json:"short_code"`
 	ExpiresAt   *time.Time `json:"expires_at"`
+	Password    string     `json:"password" binding:"min=8"`
 }
 
 type ResponseUrl struct {
@@ -47,14 +48,14 @@ type ResponseUrl struct {
 }
 
 type UpdateURLRequest struct {
-	NewPassword string `json:"new_password"`
+	NewPassword string `json:"new_password" binding:"min=8"`
 	OldPassword string `json:"old_password"`
 	Expiration  string `json:"expiration"`
 	Status      string `json:"status"`
 }
 
 type UpdateUserRequest struct {
-	NewPassword string `json:"new_password"`
+	NewPassword string `json:"new_password" binding:"min=8"`
 	OldPassword string `json:"old_password"`
 	FullName    string `json:"full_name"`
 	Email       string `json:"email" binding:"email"`
