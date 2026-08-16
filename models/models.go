@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type User struct {
 	Id             int
@@ -30,5 +34,12 @@ type Analytics struct {
 	UrlID      int
 	ClickedAt  time.Time
 	DeviceType string
-	Country    string
+	IpAddress  string
+	UserAgent  string
+}
+
+type Claims struct {
+	UserId int
+	Role   string
+	jwt.RegisteredClaims
 }

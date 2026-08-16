@@ -65,3 +65,7 @@ type SetPasswordRequest struct {
 	NewPassword          string `json:"new_password" binding:"min=8"`
 	ConfirmationPassword string `json:"confirmation_password" binding:"required,eqfield=NewPassword"`
 }
+
+type Token struct {
+	Key string `json:"token"`
+}
