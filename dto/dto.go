@@ -48,10 +48,10 @@ type ResponseUrl struct {
 }
 
 type UpdateURLRequest struct {
-	NewPassword string `json:"new_password" binding:"min=8"`
-	OldPassword string `json:"old_password"`
-	Expiration  string `json:"expiration"`
-	Status      string `json:"status"`
+	NewPassword string     `json:"new_password" binding:"min=8"`
+	OldPassword string     `json:"old_password"`
+	Expiration  *time.Time `json:"expiration"`
+	Status      string     `json:"status"`
 }
 
 type UpdateUserRequest struct {
@@ -59,4 +59,9 @@ type UpdateUserRequest struct {
 	OldPassword string `json:"old_password"`
 	FullName    string `json:"full_name"`
 	Email       string `json:"email" binding:"email"`
+}
+
+type SetPasswordRequest struct {
+	NewPassword          string `json:"new_password" binding:"min=8"`
+	ConfirmationPassword string `json:"confirmation_password" binding:"required,eqfield=NewPassword"`
 }
