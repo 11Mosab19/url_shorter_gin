@@ -98,4 +98,9 @@ var (
 		Code:    http.StatusUnauthorized,
 		Message: "not supported",
 	}
+
+	ErrBadRequestData = &AppError{
+		Code:    http.StatusBadRequest,
+		Message: "bad request",
+	}
 )

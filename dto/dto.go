@@ -6,12 +6,6 @@ type Device struct {
 	Type        string
 	TotalClicks int
 }
-
-type Country struct {
-	Name        string
-	TotalClicks int
-}
-
 type RegisterRequest struct {
 	Email                string `json:"email" binding:"required,email"`
 	Password             string `json:"password" binding:"required,min=8"`
@@ -39,12 +33,11 @@ type CreateURLRequest struct {
 }
 
 type ResponseUrl struct {
-	CreatorName string    `json:"creator_name"`
-	OriginalUrl string    `json:"original_url"`
-	ShortedCode string    `json:"shorted_code"`
-	TotalClicks int       `json:"total_clicks"`
-	DevicesUsed []Device  `json:"devices_used"`
-	Countries   []Country `json:"countries"`
+	CreatorName string   `json:"creator_name"`
+	OriginalUrl string   `json:"original_url"`
+	ShortedCode string   `json:"shorted_code"`
+	TotalClicks int      `json:"total_clicks"`
+	DevicesUsed []Device `json:"devices_used"`
 }
 
 type UpdateURLRequest struct {

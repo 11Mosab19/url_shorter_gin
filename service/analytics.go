@@ -37,14 +37,6 @@ func (AS *AnalyticsService) GetUrlAnalytics(ctx context.Context, urlId int) ([]m
 	return analytics, nil
 }
 
-func (AS *AnalyticsService) GetUrlUsersIps(ctx context.Context, urlId int) ([]string, error) {
-	Ips, err := AS.repo.GetIpAddressesForUrlById(ctx, urlId)
-	if err != nil {
-		return []string{}, err
-	}
-	return Ips, nil
-}
-
 func (AS *AnalyticsService) GetUrlUsersDevices(ctx context.Context, urlId int) ([]string, error) {
 	devices, err := AS.repo.GetUsedDevicesForUrlWithId(ctx, urlId)
 	if err != nil {

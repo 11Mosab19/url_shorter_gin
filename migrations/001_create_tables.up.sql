@@ -33,7 +33,6 @@ CREATE TABLE analytics (
     url_id INT REFERENCES urls(id) ON DELETE CASCADE,
     clicked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     device_type TEXT NOT NULL,
-    ip_address TEXT NOT NULL
 );
 
 

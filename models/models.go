@@ -34,7 +34,6 @@ type Analytics struct {
 	UrlID      int
 	ClickedAt  time.Time
 	DeviceType string
-	IpAddress  string
 	UserAgent  string
 }
 
