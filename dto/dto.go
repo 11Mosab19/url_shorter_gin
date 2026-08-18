@@ -1,10 +1,13 @@
 package dto
 
-import "time"
+import (
+	"time"
+	"url_shorter_gin/models"
+)
 
 type Device struct {
-	Type        string
-	TotalClicks int
+	Type        string `json:"type"`
+	TotalClicks int    `json:"total_clicks"`
 }
 type RegisterRequest struct {
 	Email                string `json:"email" binding:"required,email"`
@@ -33,11 +36,11 @@ type CreateURLRequest struct {
 }
 
 type ResponseUrl struct {
-	CreatorName string   `json:"creator_name"`
-	OriginalUrl string   `json:"original_url"`
-	ShortedCode string   `json:"shorted_code"`
-	TotalClicks int      `json:"total_clicks"`
-	DevicesUsed []Device `json:"devices_used"`
+	CreatorName string          `json:"creator_name"`
+	OriginalUrl string          `json:"original_url"`
+	ShortedCode string          `json:"shorted_code"`
+	TotalClicks int             `json:"total_clicks"`
+	DevicesUsed []models.Device `json:"devices_used"`
 }
 
 type UpdateURLRequest struct {

@@ -180,3 +180,14 @@ func (UrS *UrlService) SetPasswordToUrl(ctx context.Context, Data dto.SetPasswor
 func (UrS *UrlService) DeleteUrlById(ctx context.Context, id int, userId int) error {
 	return UrS.repo.DeleteUrlById(ctx, id, userId)
 }
+
+func (UrS *UrlService) GetUrlById(ctx context.Context, id int, userId int) (models.Url, error) {
+	url, err := UrS.repo.GetUrlById(ctx, id)
+	if err != nil {
+		return models.Url{}, err
+	}
+	if url.UserID != userId {
+		return models.Url{}, apperrors.ErrUnauthorized
+	}
+	return url, nil
+}

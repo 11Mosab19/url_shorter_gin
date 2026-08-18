@@ -37,10 +37,10 @@ func (AS *AnalyticsService) GetUrlAnalytics(ctx context.Context, urlId int) ([]m
 	return analytics, nil
 }
 
-func (AS *AnalyticsService) GetUrlUsersDevices(ctx context.Context, urlId int) ([]string, error) {
-	devices, err := AS.repo.GetUsedDevicesForUrlWithId(ctx, urlId)
+func (AS *AnalyticsService) GetUrlUsersDevices(ctx context.Context, urlId int) ([]models.Device, error) {
+	devices, err := AS.repo.GetTotalClicksForUrlFromDevices(ctx, urlId)
 	if err != nil {
-		return []string{}, err
+		return []models.Device{}, err
 	}
 	return devices, nil
 }

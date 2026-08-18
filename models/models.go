@@ -42,3 +42,8 @@ type Claims struct {
 	Role   string
 	jwt.RegisteredClaims
 }
+
+type Device struct {
+	Type        string `json:"type"`
+	TotalClicks int    `json:"total_clicks"`
+}

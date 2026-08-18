@@ -62,3 +62,32 @@ func (AnR *AnalyticsRepository) GetUsedDevicesForUrlWithId(ctx context.Context, 
 	}
 	return devices, nil
 }
+
+func (AnR *AnalyticsRepository) GetTotalClicksForUrlFromDevices(ctx context.Context, urlId int) ([]models.Device, error) {
+
+	var devices []models.Device
+
+	Query := `SELECT device_type,total_clicks FROM analytics JOIN urls ON
+	analytics.url_id = urls.id 
+	WHERE url_id = $1
+	GROUP BY analytics.device_type;`
+
+	rows, err := AnR.DB.DB.QueryContext(ctx, Query, urlId)
+
+	if err != nil {
+		return []models.Device{}, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var device models.Device
+		err := rows.Scan(&device.Type, &device.TotalClicks)
+		if err != nil {
+			return []models.Device{}, err
+		}
+		devices = append(devices, device)
+	}
+	if err := rows.Err(); err != nil {
+		return []models.Device{}, err
+	}
+	return devices, nil
+}
