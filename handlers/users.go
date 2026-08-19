@@ -39,22 +39,22 @@ func (UH *UsersHandler) GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	var ResponseUrls []dto.ResponseUrl
+	var ResponseProfileUrls []dto.ResponseProfileUrl
 
 	for _, url := range urls {
-		dtoUrl := dto.ResponseUrl{
-			CreatorName: userData.FullName,
+		dtoUrl := dto.ResponseProfileUrl{
 			OriginalUrl: url.OriginalUrl,
 			ShortedCode: url.ShortCode,
 			TotalClicks: url.TotalClicks,
+			Status:      url.Status,
 		}
-		ResponseUrls = append(ResponseUrls, dtoUrl)
+		ResponseProfileUrls = append(ResponseProfileUrls, dtoUrl)
 	}
 
 	DisplayUser := dto.DisplayUser{
 		Id:       userData.Id,
 		Role:     userData.Role,
-		Urls:     ResponseUrls,
+		Urls:     ResponseProfileUrls,
 		FullName: userData.FullName,
 	}
 

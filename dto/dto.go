@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"encoding/json"
 	"time"
 	"url_shorter_gin/models"
 )
@@ -22,10 +23,10 @@ type LoginRequest struct {
 }
 
 type DisplayUser struct {
-	Id       int           `json:"id"`
-	Role     string        `json:"role"`
-	FullName string        `json:"full_name"`
-	Urls     []ResponseUrl `json:"urls"`
+	Id       int                  `json:"id"`
+	Role     string               `json:"role"`
+	FullName string               `json:"full_name"`
+	Urls     []ResponseProfileUrl `json:"urls"`
 }
 
 type CreateURLRequest struct {
@@ -36,18 +37,19 @@ type CreateURLRequest struct {
 }
 
 type ResponseUrl struct {
-	CreatorName string          `json:"creator_name"`
+	Id          int             `json:"id"`
 	OriginalUrl string          `json:"original_url"`
 	ShortedCode string          `json:"shorted_code"`
 	TotalClicks int             `json:"total_clicks"`
+	Status      string          `json:"status"`
 	DevicesUsed []models.Device `json:"devices_used"`
 }
 
 type UpdateURLRequest struct {
-	NewPassword string     `json:"new_password" binding:"min=8"`
-	OldPassword string     `json:"old_password"`
-	Expiration  *time.Time `json:"expiration"`
-	Status      string     `json:"status"`
+	NewPassword string          `json:"new_password" binding:"min=8"`
+	OldPassword string          `json:"old_password"`
+	Expiration  json.RawMessage `json:"expiration"`
+	Status      string          `json:"status"`
 }
 
 type UpdateUserRequest struct {
@@ -64,4 +66,14 @@ type SetPasswordRequest struct {
 
 type Token struct {
 	Key string `json:"token"`
+}
+type ResponseProfileUrl struct {
+	OriginalUrl string `json:"original_url"`
+	ShortedCode string `json:"shorted_code"`
+	TotalClicks int    `json:"total_clicks"`
+	Status      string `json:"status"`
+}
+
+type UrlPasswordReq struct {
+	Password string `form:"password"`
 }

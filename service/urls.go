@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 	"url_shorter_gin/apperrors"
 	"url_shorter_gin/dto"
@@ -121,18 +122,25 @@ func (Urs *UrlService) RedirectByShortCode(ctx context.Context, ShortCode string
 }
 
 func (UrS *UrlService) UpdateUrlExpiration(ctx context.Context, data dto.UpdateURLRequest, id int, userId int) (models.Url, error) {
-	if data.Expiration != nil {
-		toUpdate := *data.Expiration
-		if toUpdate.Before(time.Now()) {
+
+	var expiration *time.Time
+
+	if string(data.Expiration) == "null" {
+		data.Expiration = nil
+	} else {
+		var exp time.Time
+
+		err := json.Unmarshal(data.Expiration, &exp)
+		if err != nil {
 			return models.Url{}, apperrors.ErrInvalidExpirationInput
 		}
-		url, err := UrS.repo.UpdateUrlExpireDate(ctx, id, userId, data.Expiration)
-		if err != nil {
-			return models.Url{}, err
+		if exp.Before(time.Now()) {
+			return models.Url{}, apperrors.ErrInvalidExpirationInput
 		}
-		return url, nil
+		expiration = &exp
+
 	}
-	url, err := UrS.repo.UpdateUrlExpireDate(ctx, id, userId, data.Expiration)
+	url, err := UrS.repo.UpdateUrlExpireDate(ctx, id, userId, expiration)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -178,6 +186,13 @@ func (UrS *UrlService) SetPasswordToUrl(ctx context.Context, Data dto.SetPasswor
 }
 
 func (UrS *UrlService) DeleteUrlById(ctx context.Context, id int, userId int) error {
+	url, err := UrS.repo.GetUrlById(ctx, id)
+	if err != nil {
+		return err
+	}
+	if url.UserID != userId {
+		return apperrors.ErrUnauthorized
+	}
 	return UrS.repo.DeleteUrlById(ctx, id, userId)
 }
 
@@ -190,4 +205,8 @@ func (UrS *UrlService) GetUrlById(ctx context.Context, id int, userId int) (mode
 		return models.Url{}, apperrors.ErrUnauthorized
 	}
 	return url, nil
+}
+
+func (UrS *UrlService) GetUrlByShortcode(ctx context.Context, shortcode string) (models.Url, error) {
+	return UrS.repo.GetUrlByShortCode(ctx, shortcode)
 }
