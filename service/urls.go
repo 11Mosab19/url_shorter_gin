@@ -14,7 +14,7 @@ import (
 )
 
 type UrlService struct {
-	repo repository.UrlRepository
+	Repo repository.UrlRepository
 }
 
 func (UrS *UrlService) CreateUrl(ctx context.Context, UrlData dto.CreateURLRequest, UserId int) (models.Url, error) {
@@ -44,7 +44,7 @@ func (UrS *UrlService) CreateUrl(ctx context.Context, UrlData dto.CreateURLReque
 	url.OriginalUrl = UrlData.OriginalUrl
 	url.ExpiresAt = UrlData.ExpiresAt
 
-	url, err := UrS.repo.CreateUrl(ctx, url)
+	url, err := UrS.Repo.CreateUrl(ctx, url)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -52,11 +52,11 @@ func (UrS *UrlService) CreateUrl(ctx context.Context, UrlData dto.CreateURLReque
 }
 
 func (UrS *UrlService) GetUserUrls(ctx context.Context, UserId int) ([]models.Url, error) {
-	return UrS.repo.GetUserUrl(ctx, UserId)
+	return UrS.Repo.GetUserUrl(ctx, UserId)
 }
 
 func (UrS *UrlService) UpdateUrlStatus(ctx context.Context, UserId int, data dto.UpdateURLRequest, id int) (models.Url, error) {
-	url, err := UrS.repo.GetUrlById(ctx, id)
+	url, err := UrS.Repo.GetUrlById(ctx, id)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -71,7 +71,7 @@ func (UrS *UrlService) UpdateUrlStatus(ctx context.Context, UserId int, data dto
 			return models.Url{}, apperrors.ErrInvalidStatusInput
 		}
 		if data.Status == "active" {
-			_, err := UrS.repo.UpdateUrlStatus(ctx, data.Status, id, UserId)
+			_, err := UrS.Repo.UpdateUrlStatus(ctx, data.Status, id, UserId)
 			if err != nil {
 				return models.Url{}, err
 			}
@@ -80,7 +80,7 @@ func (UrS *UrlService) UpdateUrlStatus(ctx context.Context, UserId int, data dto
 		}
 	}
 	if url.Status == "active" {
-		_, err := UrS.repo.UpdateUrlStatus(ctx, data.Status, id, UserId)
+		_, err := UrS.Repo.UpdateUrlStatus(ctx, data.Status, id, UserId)
 		if err != nil {
 			return models.Url{}, err
 		}
@@ -88,7 +88,7 @@ func (UrS *UrlService) UpdateUrlStatus(ctx context.Context, UserId int, data dto
 		return url, nil
 	}
 	if url.Status == "disabled" {
-		_, err := UrS.repo.UpdateUrlStatus(ctx, data.Status, id, UserId)
+		_, err := UrS.Repo.UpdateUrlStatus(ctx, data.Status, id, UserId)
 		if err != nil {
 			return models.Url{}, err
 		}
@@ -98,7 +98,7 @@ func (UrS *UrlService) UpdateUrlStatus(ctx context.Context, UserId int, data dto
 }
 
 func (Urs *UrlService) RedirectByShortCode(ctx context.Context, ShortCode string, password string) (models.Url, error) {
-	url, err := Urs.repo.GetUrlByShortCode(ctx, ShortCode)
+	url, err := Urs.Repo.GetUrlByShortCode(ctx, ShortCode)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -140,7 +140,7 @@ func (UrS *UrlService) UpdateUrlExpiration(ctx context.Context, data dto.UpdateU
 		expiration = &exp
 
 	}
-	url, err := UrS.repo.UpdateUrlExpireDate(ctx, id, userId, expiration)
+	url, err := UrS.Repo.UpdateUrlExpireDate(ctx, id, userId, expiration)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -148,7 +148,7 @@ func (UrS *UrlService) UpdateUrlExpiration(ctx context.Context, data dto.UpdateU
 }
 
 func (UrS *UrlService) UpdateUrlPassword(ctx context.Context, data dto.UpdateURLRequest, id int, userId int) (models.Url, error) {
-	url, err := UrS.repo.GetUrlById(ctx, id)
+	url, err := UrS.Repo.GetUrlById(ctx, id)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -163,7 +163,7 @@ func (UrS *UrlService) UpdateUrlPassword(ctx context.Context, data dto.UpdateURL
 	if err != nil {
 		return models.Url{}, apperrors.HashingErr
 	}
-	url, err = UrS.repo.UpdateUrlHashedPassword(ctx, id, string(HashedPassword), userId)
+	url, err = UrS.Repo.UpdateUrlHashedPassword(ctx, id, string(HashedPassword), userId)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -178,7 +178,7 @@ func (UrS *UrlService) SetPasswordToUrl(ctx context.Context, Data dto.SetPasswor
 	if err != nil {
 		return models.Url{}, apperrors.HashingErr
 	}
-	url, err := UrS.repo.UpdateUrlHashedPassword(ctx, id, string(HashedPassword), userId)
+	url, err := UrS.Repo.UpdateUrlHashedPassword(ctx, id, string(HashedPassword), userId)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -186,18 +186,18 @@ func (UrS *UrlService) SetPasswordToUrl(ctx context.Context, Data dto.SetPasswor
 }
 
 func (UrS *UrlService) DeleteUrlById(ctx context.Context, id int, userId int) error {
-	url, err := UrS.repo.GetUrlById(ctx, id)
+	url, err := UrS.Repo.GetUrlById(ctx, id)
 	if err != nil {
 		return err
 	}
 	if url.UserID != userId {
 		return apperrors.ErrUnauthorized
 	}
-	return UrS.repo.DeleteUrlById(ctx, id, userId)
+	return UrS.Repo.DeleteUrlById(ctx, id, userId)
 }
 
 func (UrS *UrlService) GetUrlById(ctx context.Context, id int, userId int) (models.Url, error) {
-	url, err := UrS.repo.GetUrlById(ctx, id)
+	url, err := UrS.Repo.GetUrlById(ctx, id)
 	if err != nil {
 		return models.Url{}, err
 	}
@@ -208,5 +208,5 @@ func (UrS *UrlService) GetUrlById(ctx context.Context, id int, userId int) (mode
 }
 
 func (UrS *UrlService) GetUrlByShortcode(ctx context.Context, shortcode string) (models.Url, error) {
-	return UrS.repo.GetUrlByShortCode(ctx, shortcode)
+	return UrS.Repo.GetUrlByShortCode(ctx, shortcode)
 }

@@ -10,7 +10,7 @@ import (
 )
 
 type AnalyticsService struct {
-	repo repository.AnalyticsRepository
+	Repo repository.AnalyticsRepository
 }
 
 func (AS *AnalyticsService) CreateAnalytic(ctx context.Context, data models.Analytics) (models.Analytics, error) {
@@ -20,7 +20,7 @@ func (AS *AnalyticsService) CreateAnalytic(ctx context.Context, data models.Anal
 	data.DeviceType = string(agent.Device())
 	data.ClickedAt = time.Now()
 
-	analytic, err := AS.repo.CreateAnalytic(ctx, data)
+	analytic, err := AS.Repo.CreateAnalytic(ctx, data)
 	if err != nil {
 		return models.Analytics{}, err
 	}
@@ -30,7 +30,7 @@ func (AS *AnalyticsService) CreateAnalytic(ctx context.Context, data models.Anal
 }
 
 func (AS *AnalyticsService) GetUrlAnalytics(ctx context.Context, urlId int) ([]models.Analytics, error) {
-	analytics, err := AS.repo.GetUrlAnalyticsByUrlId(ctx, urlId)
+	analytics, err := AS.Repo.GetUrlAnalyticsByUrlId(ctx, urlId)
 	if err != nil {
 		return []models.Analytics{}, err
 	}
@@ -38,7 +38,7 @@ func (AS *AnalyticsService) GetUrlAnalytics(ctx context.Context, urlId int) ([]m
 }
 
 func (AS *AnalyticsService) GetUrlUsersDevices(ctx context.Context, urlId int) ([]models.Device, error) {
-	devices, err := AS.repo.GetTotalClicksForUrlFromDevices(ctx, urlId)
+	devices, err := AS.Repo.GetTotalClicksForUrlFromDevices(ctx, urlId)
 	if err != nil {
 		return []models.Device{}, err
 	}

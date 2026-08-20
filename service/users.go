@@ -11,7 +11,7 @@ import (
 )
 
 type UserService struct {
-	repo repository.UserRepository
+	Repo repository.UserRepository
 }
 
 func (US *UserService) RegisterUser(ctx context.Context, registerData dto.RegisterRequest) (models.User, error) {
@@ -26,7 +26,7 @@ func (US *UserService) RegisterUser(ctx context.Context, registerData dto.Regist
 	user.FullName = registerData.FullName
 	user.HashedPassword = registerData.Password
 
-	user, err = US.repo.CreateUser(ctx, user)
+	user, err = US.Repo.CreateUser(ctx, user)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -34,7 +34,7 @@ func (US *UserService) RegisterUser(ctx context.Context, registerData dto.Regist
 }
 
 func (US *UserService) Login(ctx context.Context, loginData dto.LoginRequest) (models.User, error) {
-	user, err := US.repo.GetUserByEmail(ctx, loginData.Email)
+	user, err := US.Repo.GetUserByEmail(ctx, loginData.Email)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -46,7 +46,7 @@ func (US *UserService) Login(ctx context.Context, loginData dto.LoginRequest) (m
 }
 
 func (US *UserService) GetUserById(ctx context.Context, id int) (models.User, error) {
-	return US.repo.GetUserById(ctx, id)
+	return US.Repo.GetUserById(ctx, id)
 }
 
 func (US *UserService) UpdateUserPassword(ctx context.Context, req dto.UpdateUserRequest, id int) (models.User, error) {
@@ -62,7 +62,7 @@ func (US *UserService) UpdateUserPassword(ctx context.Context, req dto.UpdateUse
 	if err != nil {
 		return models.User{}, apperrors.HashingErr
 	}
-	user, err = US.repo.UpdateUserHashedPassword(ctx, string(Hashed), id)
+	user, err = US.Repo.UpdateUserHashedPassword(ctx, string(Hashed), id)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -70,7 +70,7 @@ func (US *UserService) UpdateUserPassword(ctx context.Context, req dto.UpdateUse
 }
 
 func (US *UserService) UpdateUserEmail(ctx context.Context, req dto.UpdateUserRequest, id int) (models.User, error) {
-	user, err := US.repo.UpdateUserEmail(ctx, id, req.Email)
+	user, err := US.Repo.UpdateUserEmail(ctx, id, req.Email)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -78,7 +78,7 @@ func (US *UserService) UpdateUserEmail(ctx context.Context, req dto.UpdateUserRe
 }
 
 func (US *UserService) UpdateUserFullName(ctx context.Context, req dto.UpdateUserRequest, id int) (models.User, error) {
-	user, err := US.repo.UpdateUserFullName(ctx, id, req.FullName)
+	user, err := US.Repo.UpdateUserFullName(ctx, id, req.FullName)
 	if err != nil {
 		return models.User{}, err
 	}
